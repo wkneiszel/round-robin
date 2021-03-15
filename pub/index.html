@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Round Robin Tournament</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div v-cloak id="app">
+        <h1>Round Robin Tournament</h1>
+        
+        <div id="passwordArea" v-bind:hidden="authenticated">
+            <p>You are currently unauthenticated, please log in if you wish to edit the standings.</p>
+            <label for="passwordInput">Password: </label>
+            <input @keyup.enter.native="authenticate" name="passwordInput" type="password" v-model="password">
+            <button v-on:click="authenticate" v-bind:disabled="password.length == 0">Log in</button>
+        </div>
+        
+        <br>
+
+        <button class="collapsible">Games</button>
+        <div class="content">
+            <div class="table">
+                <div class="row">
+                    <div class="labelCell"></div>
+                    <div v-for="(row, rowIndex) in results" class="labelCell" v-on:click="setTeamName(rowIndex)">
+                        {{teamNames[rowIndex]}}
+                    </div>
+                    <div class="labelCell" v-on:click="newTeam">+</div>
+                </div>
+                <div v-for="(row, rowIndex) in results" class="row" :key="row">
+                    <div class="labelCell" v-on:click="setTeamName(rowIndex)">
+                        {{teamNames[rowIndex]}}
+                    </div>
+                    <div v-for="(state, colIndex) in row" v-on:click="cycleState(rowIndex, colIndex)" v-bind:style="getColorForState(state)" class="cell" :key="state">
+                        {{state}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="labelCell" v-on:click="newTeam">+</div>
+                </div>
+            </div>
+            <br>
+        </div>
+        
+        <button class="collapsible">Standings</button>
+        <div class="content">
+            <table>
+                <caption>The tournament standings</caption>
+                <tr>
+                    <th scope="col">Ranking</th>
+                    <th scope="col">Team Name</th>
+                    <th scope="col">Wins</th>
+                    <th scope="col">Losses</th>
+                </tr>
+                <tr v-for="(team, standing) in orderedStandings" :key="team.name">
+                    <td>{{standing + 1}}</td>
+                    <td>{{team.name}}</td>
+                    <td>{{team.wins}}</td>
+                    <td>{{team.losses}}</td>
+                </tr>
+            </table>
+            <br>
+        </div>
+
+        <button class="collapsible">About</button>
+        <div class="content">
+            <p>A tool for tracking and viewing the status of round robin-style tournaments.</p>
+            <p>An overview of some of some features you may like to know:</p>
+            <ul>
+                <li>Each row represents games played by the team listed in the leftmost column</li>
+                <li>Each column represents the team being played</li>
+                <li>To change the outcome of a game, click on its square</li>
+                <li>Teams can be renamed by clicking their names along side the Games display</li>
+                <li>If you enter a blank team name, that team will be removed</li>
+                <li>Additional teams can be added by clicking the plus icon</li>
+                <li>To make any changes, it is necessary to log in using the super-secret password. When the server is first started, this password is "password123" but it can be changed from the admin menu once authenticated.</li>
+            </ul>
+            <br>
+        </div>
+
+        <button v-bind:hidden="!authenticated" class="collapsible">Admin</button>
+        <div v-bind:hidden="!authenticated" class="content">
+            <h3>Clear Standings:</h3>
+            <button v-on:click="clearBoard">Clear Standings</button>
+            <div id = "newPasswordArea">
+                <h3>Reset password:</h3>
+                <label for="newPasswordInput">New Password: </label>
+                <input @keyup.enter.native="resetPassword" name="newPasswordInput" type="password" v-model="newPassword">
+                <br>
+                <label for="confirmNewPasswordInput">Confirm New Password: </label>
+                <input @keyup.enter.native="resetPassword" name="confirmNewPasswordInput" type="password" v-model="confirmNewPassword">
+                <br>
+                <button v-on:click="resetPassword" v-bind:disabled="newPassword.length == 0 || confirmNewPassword.length == 0">Reset Password</button>
+            </div>
+            <h3>Log Out:</h3>
+            <button v-on:click="logout">Log Out</button>
+            <br><br>
+        </div>
+    </div>
+</body>
+<script src="js/jquery-3.5.1.js"></script>
+<script src="js/vue.global.js"></script>
+<script src="js/client.js"></script>
+</html>
