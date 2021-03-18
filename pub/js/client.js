@@ -175,8 +175,8 @@ var vm = {
             }
         },
         resetPassword(){
-            if(!this.authenticated) {
-                shakePassword();
+            if(!this.authenticated || this.newPassword.length < 1) {
+                shakeNewPassword();
                 return;
             }
             if(this.newPassword == this.confirmNewPassword){
@@ -185,9 +185,10 @@ var vm = {
                         newPassword: this.newPassword
                     },
                     dataFromServer => {});
+                this.password = this.newPassword;
                 this.newPassword = "";
                 this.confirmNewPassword = "";
-                alert("Password has been reset.")
+                alert("Password has been reset.");
             }
             else{
                 shakeNewPassword();
