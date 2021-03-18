@@ -163,6 +163,7 @@ var vm = {
                     dataFromServer => {
                         this.teamNames = dataFromServer.teamNames;
                         this.results = dataFromServer.results;
+                        resetCollapsibleSize();
                     });
             }
         },
@@ -250,4 +251,15 @@ for (collapsibleIndex = 0; collapsibleIndex < coll.length; collapsibleIndex++) {
       content.style.maxHeight = content.scrollHeight + "px";
     } 
   });
+}
+
+function resetCollapsibleSize(){
+    let newGamesHeight = $("#gamesContent").prop("scrollHeight") + 10000 + "px";
+    let newStandingssHeight = $("#standingsContent").prop("scrollHeight") + 10000 + "px";
+    if($("#gamesCollapsible").hasClass("active")){
+        $("#gamesContent").css("max-height", newGamesHeight);
+    }
+    if($("#standingsCollapsible").hasClass("active")){
+        $("#standingsContent").css("max-height", newStandingssHeight);
+    }
 }
